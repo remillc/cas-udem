@@ -8,11 +8,11 @@ var CAS = require('../lib/cas')
     , nock = require('nock');
 
 // Initial server infomation
-var base_url = 'https://localhost/cas',
+var baseUrl = 'https://localhost/cas',
     service = 'test_service',
     sso_servers = ['test_remote_address'],
     cas = new CAS({
-        base_url: base_url,
+        baseUrl: baseUrl,
         service: service,
         version: 2.0,
         sso_servers: sso_servers
@@ -31,11 +31,11 @@ module.exports = {
         var req = {
             method: 'POST',
             body: {
-                logoutRequest: '<samlp:LogoutRequest>' + 
-                                    '<samlp:SessionIndex>' + 
-                                        ticket + 
-                                    '</samlp:SessionIndex>' +
-                               '</samlp:LogoutRequest>'
+                logoutRequest: '<samlp:LogoutRequest>' +
+                    '<samlp:SessionIndex>' +
+                    ticket +
+                    '</samlp:SessionIndex>' +
+                    '</samlp:LogoutRequest>'
             },
             connection: {
                 remoteAddress: sso_servers[0]
@@ -56,7 +56,7 @@ module.exports = {
     },
 
 
-    'handleSingleSignout - should call next method when get invalid request': function() {
+    'handleSingleSignout - should call next method when get invalid request': function () {
         // Assign
         var req = {
             method: 'POST',
@@ -93,12 +93,12 @@ module.exports = {
             memberof: ['CN=Staff,OU=Groups,DC=example,DC=edu', 'CN=Spanish Department,OU=Departments,...']
         };
         var attributesTag = '<cas:attributes>' +
-                                '<cas:attraStyle>' + attributes.attrastyle[0] + '</cas:attraStyle>' +
-                                '<cas:surname>' + attributes.surname[0] + '</cas:surname>' +
-                                '<cas:givenName>' + attributes.givenname[0] + '</cas:givenName>' +
-                                '<cas:memberOf>' + attributes.memberof[0] + '</cas:memberOf>' +
-                                '<cas:memberOf>' + attributes.memberof[1] + '</cas:memberOf>' +
-                            '</cas:attributes>';
+            '<cas:attraStyle>' + attributes.attrastyle[0] + '</cas:attraStyle>' +
+            '<cas:surname>' + attributes.surname[0] + '</cas:surname>' +
+            '<cas:givenName>' + attributes.givenname[0] + '</cas:givenName>' +
+            '<cas:memberOf>' + attributes.memberof[0] + '</cas:memberOf>' +
+            '<cas:memberOf>' + attributes.memberof[1] + '</cas:memberOf>' +
+            '</cas:attributes>';
         var proxyGrantingTicket = "PROXY_GRANTING_TICKET";
         var proxies = ['proxy1', 'proxy2'];
         var proxiesTag = '';
@@ -107,17 +107,17 @@ module.exports = {
         });
 
         // Mock up response 
-        nock(base_url)
+        nock(baseUrl)
             .get('/proxyValidate')
             .query({ ticket: ticket, service: service })
             .reply(200,
                 '<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">' +
-                    '<cas:authenticationSuccess>' +
-                        '<cas:user>' + user + '</cas:user>' +
-                        attributesTag +
-                        '<cas:proxyGrantingTicket>' + proxyGrantingTicket + '</cas:proxyGrantingTicket>' +
-                        proxiesTag +
-                    '</cas:authenticationSuccess>' +
+                '<cas:authenticationSuccess>' +
+                '<cas:user>' + user + '</cas:user>' +
+                attributesTag +
+                '<cas:proxyGrantingTicket>' + proxyGrantingTicket + '</cas:proxyGrantingTicket>' +
+                proxiesTag +
+                '</cas:authenticationSuccess>' +
                 '</cas:serviceResponse>');
 
         var callback = function (err, one, username, ticketInfo) {
@@ -156,28 +156,28 @@ module.exports = {
         // Assign
         var ticket = "TEST TICKET";
 
-         // Mock up response 
-        nock(base_url)
+        // Mock up response 
+        nock(baseUrl)
             .get('/proxyValidate')
             .query({ ticket: ticket, service: service })
             .reply(200,
                 '<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">' +
-                    '<cas:authenticationSuccess>' +
-                        '<cas:proxyGrantingTicket>TEST PROXY GRANTING TICKET</cas:proxyGrantingTicket>' +
-                    '</cas:authenticationSuccess>' +
+                '<cas:authenticationSuccess>' +
+                '<cas:proxyGrantingTicket>TEST PROXY GRANTING TICKET</cas:proxyGrantingTicket>' +
+                '</cas:authenticationSuccess>' +
                 '</cas:serviceResponse>');
 
-         var callback = function (err, one, username, ticketInfo) {
+        var callback = function (err, one, username, ticketInfo) {
             // Assert
             should.exist(err, 'should return a error');
             should.equal(err.message, 'No username?', 'should return no username error message');
-            
+
             should.exist(one, 'should return');
             should.equal(one, false, 'should return false');
-            
+
             should.not.exist(username, 'should not return username');
             should.not.exist(ticketInfo, 'should not return ticket info');
-         };
+        };
 
         // Action
         cas.validate(ticket, callback, service, null);
@@ -188,21 +188,21 @@ module.exports = {
         // Assign
         var ticket = "TEST TICKET";
 
-         // Mock up response 
-        nock(base_url)
+        // Mock up response 
+        nock(baseUrl)
             .get('/proxyValidate')
             .query({ ticket: ticket, service: service })
             .reply(200, 'INVALID RESPONSE DATA');
 
-         var callback = function (err, one, username, ticketInfo) {
+        var callback = function (err, one, username, ticketInfo) {
             // Assert
             should.exist(err, 'should return a error');
             should.equal(err.message, 'Bad response format.', 'should return bad request error message');
-            
+
             should.not.exist(one, 'should not return');
             should.not.exist(username, 'should not return username');
             should.not.exist(ticketInfo, 'should not return ticket info');
-         };
+        };
 
         // Action
         cas.validate(ticket, callback, service, null);
@@ -221,14 +221,14 @@ module.exports = {
         };
 
         // Mock up response 
-        nock(base_url)
+        nock(baseUrl)
             .get('/proxy')
             .query({ targetService: service, pgt: pgtID })
             .reply(200, '<cas:serviceResponse>' +
-                            '<cas:proxySuccess>' +
-                                '<cas:proxyTicket>' + proxyTicket + '</cas:proxyTicket>' +
-                            '</cas:proxySuccess>' +
-                        '</cas:serviceResponse>');
+                '<cas:proxySuccess>' +
+                '<cas:proxyTicket>' + proxyTicket + '</cas:proxyTicket>' +
+                '</cas:proxySuccess>' +
+                '</cas:serviceResponse>');
 
         var callback = function (err, returnProxyTicket) {
             // Assert
@@ -241,7 +241,7 @@ module.exports = {
         // Action
         cas.getProxyTicket(pgtIOU, service, callback);
     },
-    
+
     'getProxyTicket - should return proxy failure error': function () {
         // Assign
         var pgtID = 'TEST pgtID';
@@ -256,29 +256,29 @@ module.exports = {
         var errorMessage = 'TEST Error message';
 
         // Mock up response
-        nock(base_url)
+        nock(baseUrl)
             .get('/proxy')
             .query({ targetService: service, pgt: pgtID })
             .reply(200, '<cas:serviceResponse>' +
-                            '<cas:proxyFailure code="' + errorCode + '">' +
-                                errorMessage +
-                            '</cas:proxyFailure>' +
-                        '</cas:serviceResponse>');
-                        
-        var callback = function(err, returnProxyTicket) {
+                '<cas:proxyFailure code="' + errorCode + '">' +
+                errorMessage +
+                '</cas:proxyFailure>' +
+                '</cas:serviceResponse>');
+
+        var callback = function (err, returnProxyTicket) {
             // Assert
             should.exist(err, 'should have a error');
             should.equal(err.message, 'Proxy failure [' + errorCode + ']: ' + errorMessage, 'should return valid error message');
-            
+
             should.not.exist(returnProxyTicket, 'should not return any tickets');
         };
 
         // Action
         cas.getProxyTicket(pgtIOU, service, callback);
     },
-    
-    
-    'getProxyTicket - should return bad request when server return invalid data': function() {
+
+
+    'getProxyTicket - should return bad request when server return invalid data': function () {
         // Assign
         var pgtID = 'TEST pgtID';
         var pgtIOU = 'TEST pgtIOU';
@@ -291,17 +291,17 @@ module.exports = {
         var invalidResponse = 'INVALID RESPONSE DATA';
 
         // Mock up response
-        nock(base_url)
+        nock(baseUrl)
             .get('/proxy')
             .query({ targetService: service, pgt: pgtID })
             .reply(200, invalidResponse);
-                        
-        var callback = function(err, returnProxyTicket) {
+
+        var callback = function (err, returnProxyTicket) {
             // Assert
             should.exist(err, 'should have a error');
             console.log(err.message);
             should.equal(err.message, "Bad response format: " + invalidResponse, 'should return bad request error message');
-            
+
             should.not.exist(returnProxyTicket, 'should not return any tickets');
         };
 

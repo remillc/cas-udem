@@ -4,7 +4,7 @@
 
   This module handles CAS authentication (with support for proxies and extended attributes), and can also transparently redirect a web page if needed. The ticket validation step is available as its own function for those who wish to handle things manually. Single sign out is also supported with Express/Connect.
   
-  To start the login process manually, send your users to: `https://cas_base_url/login?service=url_to_handle_ticket_validation`. In the University of Waterloo example below, this url would be: `https://cas.uwaterloo.ca/cas/login?service='my_service'`.
+  To start the login process manually, send your users to: `https://cas.base.url/login?service=url_to_handle_ticket_validation`. In the University of Waterloo example below, this url would be: `https://cas.uwaterloo.ca/cas/login?service='my_service'`.
   
   Or if you are using standard HTTP req/res objects for a web page, you may use the provided `authenticate()` function to handle the redirection automatically.
   
@@ -23,7 +23,7 @@ Setup:
 ```javascript
     var CAS = require('cas');
     var cas = new CAS({
-        base_url: 'https://cas.uwaterloo.ca/cas', 
+        baseUrl: 'https://cas.uwaterloo.ca/cas', 
         service: 'my_service',
         version: 2.0
     });
@@ -75,7 +75,7 @@ Longer example with CAS proxy (also see the [wiki](https://github.com/joshchan/n
     // Initialize CAS
     var CAS = require('cas');
     var cas = new CAS({
-        base_url: 'https://cas.uwaterloo.ca/cas',
+        baseUrl: 'https://cas.uwaterloo.ca/cas',
         version: 2.0,
         
         // CAS server will connect to this. It must be accessible on the
