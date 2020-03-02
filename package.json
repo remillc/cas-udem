@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "cheerio": "0.19.0",
+    "loggers": "github:remillc/loggers",
     "xml2js": "^0.4.8"
   },
   "devDependencies": {
